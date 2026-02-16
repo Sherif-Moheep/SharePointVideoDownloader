@@ -4,7 +4,9 @@
   "version": "1.0",
   "permissions": [
     "webRequest",
-    "tabs"
+    "tabs",
+    "scripting",
+    "activeTab"
   ],
   "host_permissions": [
     "*://*.sharepoint.com/*",
@@ -15,20 +17,20 @@
     "service_worker": "background.js"
   },
   "icons": {
-    "16": "images/logo-16.png",
-    "32": "images/logo-32.png",
-    "34": "images/logo-34.png",
-    "48": "images/logo-48.png",
-    "128": "images/logo-128.png"
+    "16": "images/logo-16-color.png",
+    "32": "images/logo-32-color.png",
+    "34": "images/logo-34-color.png",
+    "48": "images/logo-48-color.png",
+    "128": "images/logo-128-color.png"
   },
   "action": {
     "default_title": "SharePoint Video Downloader",
     "default_icon": {
-      "16": "images/logo-16.png",
-      "32": "images/logo-32.png",
-      "34": "images/logo-34.png",
-      "48": "images/logo-48.png",
-      "128": "images/logo-128.png"
+      "16": "images/logo-16-gray.png",
+      "32": "images/logo-32-gray.png",
+      "34": "images/logo-34-gray.png",
+      "48": "images/logo-48-gray.png",
+      "128": "images/logo-128-gray.png"
     }
   }
 }
