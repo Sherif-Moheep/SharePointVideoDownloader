@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "checkJs": false,
+    "target": "ES2020"
+  },
+  "typeAcquisition": {
+    "include": ["chrome"]
+  }
+}
