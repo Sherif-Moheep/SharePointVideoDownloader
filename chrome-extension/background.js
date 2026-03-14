@@ -1,5 +1,5 @@
 // using Maps to store data separately for every tab.
-let videoMap = {}; // { tabId: { url, title, size } }
+// let videoMap = {}; // { tabId: { url, title, size } }
 let timers = {}; // { tabId: timerId }
 
 console.log("Extension started. Listening for SharePoint/Stream videos..."); // remove before production, just for testing
@@ -30,33 +30,66 @@ chrome.webRequest.onBeforeRequest.addListener(
 
 // Trigger: Handle user click on extension icon
 chrome.action.onClicked.addListener((tab) => {
-    const videoData = videoMap[tab.id];
+    const storageKey = `video_${tab.id}`;
+    
+    chrome.storage.session.get([storageKey], (result) => {
+        const videoData = result[storageKey];
 
-    if (!videoData) {
-        console.log(`No video found for Tab ${tab.id}`); // remove before production, just for testing
-        chrome.scripting.executeScript({
-            target: { tabId: tab.id },
-            function: () => alert("No video data found for this tab. Please make sure you're on a SharePoint/Stream video page and try again.")
-        })
-        return;
-    }
+        if (!videoData) {
+            console.log(`No video found for Tab ${tab.id}`); // remove before production, just for testing
+            chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                function: () => alert("❌ No video data found for this tab. Please make sure you're on a SharePoint/Stream video page and try again.")
+            });
+            return;
+        }
 
-    console.log(`READY TO DOWNLOAD:`); // remove before production, just for testing
-    console.log(`Processing: ${videoData.title}`); // remove before production, just for testing
-    console.log(`Size: ${videoData.size}`); // remove before production, just for testing
+        console.log(`READY TO DOWNLOAD:`, videoData.title); // remove before production, just for testing
 
-    // Send video details to the desktop app via Native Messaging
+        chrome.runtime.sendNativeMessage('com.sharepoint.downloader', videoData, (response) => {
+            if (chrome.runtime.lastError) {
+                console.error("Connection Error:", chrome.runtime.lastError.message); // remove before production, just for testing
+            } else {
+                console.log("Message sent successfully!"); // remove before production, just for testing
+            }
+        });
+    });
 });
 
 // Helper: Process video details and update UI
 chrome.tabs.onRemoved.addListener((tabId) => {
-    if (videoMap[tabId]) {
-        delete videoMap[tabId];
-        console.log(`Cleared data for closed Tab ${tabId}`); // remove before production, just for testing
-    }
+    const storageKey = `video_${tabId}`;
+    chrome.storage.session.remove(storageKey, () => {
+        console.log(`Cleared storage data for closed Tab ${tabId}`); // remove before production, just for testing
+    });
+    
     if (timers[tabId]) {
         clearTimeout(timers[tabId]);
         delete timers[tabId];
+    }
+});
+
+// Helper: Reset icon and clear data if user navigates away from video page
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    // If the URL changes and it's no longer a SharePoint/Stream video
+    if (changeInfo.url && !changeInfo.url.includes("videomanifest")) {
+        const storageKey = `video_${tabId}`;
+        chrome.storage.session.remove(storageKey);
+        
+        chrome.action.setIcon({ 
+            tabId: tabId, 
+            path: {
+                "16": "images/logo-16-gray.png",
+                "32": "images/logo-32-gray.png",
+                "48": "images/logo-48-gray.png",
+                "128": "images/logo-128-gray.png"
+            } 
+        });
+
+        chrome.action.setTitle({ 
+            title: "No video detected", 
+            tabId: tabId 
+        });
     }
 });
 
@@ -67,13 +100,17 @@ function grabVideoDetails(tabId, url){
 
             const videoTitle = tab.title || "Unknown Video";
             const estimatedSize = calculateVideoSize(url);
+            const storageKey = `video_${tabId}`;
 
-            videoMap[tabId] = {
+            const videoData = {
                 url: url,
                 title: videoTitle,
                 size: estimatedSize
             };
-            
+            chrome.storage.session.set({ [storageKey]: videoData }, () => {
+                console.log(`[Tab ${tabId}] Video data saved to session storage.`); // remove before production, just for testing
+            });
+
             console.log(`[Tab ${tabId}] Video Captured!`); // remove before production, just for testing
             console.log(`Title: ${videoTitle}`); // remove before production, just for testing
             console.log(`Size:  ${estimatedSize}`); // remove before production, just for testing
@@ -84,7 +121,6 @@ function grabVideoDetails(tabId, url){
                 path: {
                     "16": "images/logo-16-color.png",
                     "32": "images/logo-32-color.png",
-                    "34": "images/logo-34-color.png",
                     "48": "images/logo-48-color.png",
                     "128": "images/logo-128-color.png"
                 }
