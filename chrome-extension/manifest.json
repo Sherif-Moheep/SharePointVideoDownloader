@@ -19,18 +19,18 @@
     "service_worker": "background.js"
   },
   "icons": {
-    "16": "images/logo-16-color.png",
-    "32": "images/logo-32-color.png",
-    "48": "images/logo-48-color.png",
-    "128": "images/logo-128-color.png"
+    "16": "images/logo-16-colorv2.png",
+    "32": "images/logo-32-colorv2.png",
+    "48": "images/logo-48-colorv2.png",
+    "128": "images/logo-128-colorv2.png"
   },
   "action": {
     "default_title": "SharePoint Video Downloader",
     "default_icon": {
-      "16": "images/logo-16-gray.png",
-      "32": "images/logo-32-gray.png",
-      "48": "images/logo-48-gray.png",
-      "128": "images/logo-128-gray.png"
+      "16": "images/logo-16-grayv2.png",
+      "32": "images/logo-32-grayv2.png",
+      "48": "images/logo-48-grayv2.png",
+      "128": "images/logo-128-grayv2.png"
     }
   }
 }

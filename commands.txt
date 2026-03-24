@@ -1,0 +1,7 @@
+- ffmpeg command i found online: 
+ffmpeg -i "<copy-url-here>" -codec copy "video.mp4"
+
+- yt-dlp command gemini gave me:
+yt-dlp --concurrent-fragments 5 --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" -o "video.mp4" "PASTE_YOUR_URL_HERE"
+
+in both commands remember to used the cleaned url 

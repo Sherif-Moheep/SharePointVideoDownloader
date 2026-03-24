@@ -5,6 +5,9 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    kotlin("plugin.serialization") version "1.9.22" // serialization
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.stability.analyzer)
 }
 
 kotlin {
@@ -20,6 +23,12 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(compose.desktop.currentOs) // kotlin serialization
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2") // kotlin serialization
+            implementation("io.insert-koin:koin-core:3.5.3") // koin
+            implementation("io.insert-koin:koin-compose:1.1.2") // koin
+            implementation(libs.room.runtime)
+            implementation(libs.sqlite.bundled)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -40,6 +49,14 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "org.example.desktop_app"
             packageVersion = "1.0.0"
+
+            windows {
+                iconFile.set(project.file("src/jvmMain/resources/app-icon.ico"))
+            }
         }
     }
+}
+
+dependencies {
+    ksp(libs.room.compiler)
 }
