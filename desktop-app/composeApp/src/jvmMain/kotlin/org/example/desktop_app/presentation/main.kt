@@ -14,9 +14,10 @@ import kotlinx.coroutines.flow.asSharedFlow
 import org.example.desktop_app.data.util.ChromeMessageDecoder
 import org.example.desktop_app.di.appModule
 import org.example.desktop_app.domain.models.DownloadStatus
-import org.example.desktop_app.presentation.MainScreen.MainState
-import org.example.desktop_app.presentation.MainScreen.MainViewModel
+import org.example.desktop_app.presentation.mainScreen.MainState
+import org.example.desktop_app.presentation.mainScreen.MainViewModel
 import org.example.desktop_app.presentation.components.ExitWarningDialog
+import org.example.desktop_app.presentation.mainScreen.MainScreen
 import org.example.desktop_app.presentation.theme.AppTheme
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject

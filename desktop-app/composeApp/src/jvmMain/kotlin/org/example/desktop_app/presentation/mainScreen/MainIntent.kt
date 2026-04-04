@@ -1,4 +1,4 @@
-package org.example.desktop_app.presentation.MainScreen
+package org.example.desktop_app.presentation.mainScreen
 
 sealed interface MainIntent {
     data class StartDownload(val videoId: Long) : MainIntent

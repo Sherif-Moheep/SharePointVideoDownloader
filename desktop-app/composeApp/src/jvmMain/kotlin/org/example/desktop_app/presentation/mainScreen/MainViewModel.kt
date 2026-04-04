@@ -1,4 +1,4 @@
-package org.example.desktop_app.presentation.MainScreen
+package org.example.desktop_app.presentation.mainScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -1,4 +1,4 @@
-package org.example.desktop_app.presentation
+package org.example.desktop_app.presentation.mainScreen
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -15,11 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
-import org.example.desktop_app.presentation.MainScreen.MainEffect
-import org.example.desktop_app.presentation.MainScreen.MainIntent
-import org.example.desktop_app.presentation.MainScreen.MainState
-import org.example.desktop_app.presentation.MainScreen.MainViewModel
 import org.example.desktop_app.presentation.components.VideoHistoryCard
+import org.example.desktop_app.presentation.incomingJsonFlow
 import org.example.desktop_app.presentation.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

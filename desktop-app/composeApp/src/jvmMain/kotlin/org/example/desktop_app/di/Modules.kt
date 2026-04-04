@@ -18,7 +18,7 @@ import org.example.desktop_app.domain.usecases.MainUseCases
 import org.example.desktop_app.domain.usecases.OpenFileUseCase
 import org.example.desktop_app.domain.usecases.ProcessNewVideoJsonUseCase
 import org.example.desktop_app.domain.usecases.ResetStuckDownloadsUseCase
-import org.example.desktop_app.presentation.MainScreen.MainViewModel
+import org.example.desktop_app.presentation.mainScreen.MainViewModel
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
