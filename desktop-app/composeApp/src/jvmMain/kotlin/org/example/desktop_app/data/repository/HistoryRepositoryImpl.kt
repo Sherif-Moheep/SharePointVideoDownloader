@@ -19,7 +19,6 @@ class HistoryRepositoryImpl(
     }
 
     override suspend fun upsertVideo(video: VideoHistory) {
-        // Map the clean domain model BACK to a Room Entity
         val entity = VideoHistoryEntity(
             id = video.id,
             name = video.name,

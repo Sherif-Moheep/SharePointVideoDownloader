@@ -8,10 +8,8 @@ import org.example.desktop_app.domain.repository.ChromeRepository
 
 class ChromeRepositoryImpl : ChromeRepository {
 
-    // Configure JSON to ignore extra fields Chrome might send
     private val jsonConfig = Json { ignoreUnknownKeys = true }
 
-    // Changed from reading args/streams to just parsing the JSON string
     override suspend fun processVideoData(rawJson: String): Result<VideoMessage> = withContext(Dispatchers.IO) {
         try {
             if (rawJson.isBlank()) {

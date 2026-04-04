@@ -1,4 +1,4 @@
-package org.example.desktop_app
+package org.example.desktop_app.presentation
 
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import org.example.desktop_app.data.util.ChromeMessageDecoder
 import org.example.desktop_app.di.appModule
 import org.example.desktop_app.domain.models.DownloadStatus
-import org.example.desktop_app.presentation.MainState
-import org.example.desktop_app.presentation.MainViewModel
+import org.example.desktop_app.presentation.MainScreen.MainState
+import org.example.desktop_app.presentation.MainScreen.MainViewModel
 import org.example.desktop_app.presentation.components.ExitWarningDialog
 import org.example.desktop_app.presentation.theme.AppTheme
 import org.jetbrains.compose.resources.painterResource
@@ -92,7 +92,7 @@ fun main(args: Array<String>) {
                 alwaysOnTop = true
             ) {
 
-                App(viewModel = viewModel)
+                MainScreen(viewModel = viewModel)
 
                 // 3. THE SAFE-EXIT DIALOG
                 if (showExitWarning) {

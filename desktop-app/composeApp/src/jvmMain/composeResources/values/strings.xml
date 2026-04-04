@@ -6,4 +6,5 @@
     <string name="exit_warning_text">You have downloads in progress. Closing the app will cancel them. Are you sure you want to exit?</string>
     <string name="exit_and_cancel">Exit &amp; Cancel</string>
     <string name="keep_downloading">Keep Downloading</string>
+    <string name="file_missing">File missing. It may have been moved or deleted.</string>
 </resources>

@@ -23,10 +23,10 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
-            implementation(compose.desktop.currentOs) // kotlin serialization
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2") // kotlin serialization
-            implementation("io.insert-koin:koin-core:3.5.3") // koin
-            implementation("io.insert-koin:koin-compose:1.1.2") // koin
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
             implementation(libs.room.runtime)
             implementation(libs.sqlite.bundled)
         }

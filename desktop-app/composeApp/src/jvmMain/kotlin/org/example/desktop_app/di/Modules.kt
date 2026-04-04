@@ -9,12 +9,19 @@ import org.example.desktop_app.data.datasource.room.HistoryDao
 import org.example.desktop_app.data.repository.ChromeRepositoryImpl
 import org.example.desktop_app.data.repository.HistoryRepositoryImpl
 import org.example.desktop_app.data.repository.YtDlpRepositoryImpl
-import org.example.desktop_app.domain.models.VideoDownloadRepository
+import org.example.desktop_app.domain.repository.VideoDownloadRepository
 import org.example.desktop_app.domain.repository.ChromeRepository
 import org.example.desktop_app.domain.repository.HistoryRepository
-import org.example.desktop_app.presentation.MainViewModel
+import org.example.desktop_app.domain.usecases.DownloadVideoUseCase
+import org.example.desktop_app.domain.usecases.GetDownloadHistoryUseCase
+import org.example.desktop_app.domain.usecases.MainUseCases
+import org.example.desktop_app.domain.usecases.OpenFileUseCase
+import org.example.desktop_app.domain.usecases.ProcessNewVideoJsonUseCase
+import org.example.desktop_app.domain.usecases.ResetStuckDownloadsUseCase
+import org.example.desktop_app.presentation.MainScreen.MainViewModel
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import java.io.File
@@ -54,5 +61,13 @@ val appModule = module {
     }.bind<VideoDownloadRepository>()
 
     // 4. ViewModels
-    factoryOf(::MainViewModel)
+    viewModelOf(::MainViewModel)
+
+    // 5. UseCases
+    factoryOf(::DownloadVideoUseCase)
+    factoryOf(::GetDownloadHistoryUseCase)
+    factoryOf(::OpenFileUseCase)
+    factoryOf(::ProcessNewVideoJsonUseCase)
+    factoryOf(::ResetStuckDownloadsUseCase)
+    factoryOf(::MainUseCases)
 }

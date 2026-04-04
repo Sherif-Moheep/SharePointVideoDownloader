@@ -24,7 +24,7 @@ fun VideoHistoryEntity.toDomain(): VideoHistory {
 private fun String.toDownloadStatus(): DownloadStatus {
     return try {
         DownloadStatus.valueOf(this.uppercase())
-    } catch (e: IllegalArgumentException) {
+    } catch (_: IllegalArgumentException) {
         DownloadStatus.UNKNOWN
     }
 }

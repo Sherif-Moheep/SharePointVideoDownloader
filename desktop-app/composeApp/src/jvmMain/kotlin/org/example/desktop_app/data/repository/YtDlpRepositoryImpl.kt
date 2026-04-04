@@ -5,7 +5,7 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import org.example.desktop_app.data.util.BinaryExtractor
 import org.example.desktop_app.data.util.FileManager
-import org.example.desktop_app.domain.models.VideoDownloadRepository
+import org.example.desktop_app.domain.repository.VideoDownloadRepository
 
 class YtDlpRepositoryImpl : VideoDownloadRepository {
 
