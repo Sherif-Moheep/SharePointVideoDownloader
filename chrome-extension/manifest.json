@@ -2,6 +2,7 @@
   "manifest_version": 3,
   "name": "SharePoint Video Downloader",
   "version": "1.0",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0Aj/PQhsLcaPhwkt5V6NSMDKbMzv24/XAULeAATrO1ipv7BSWtKZdaJDne4INyMMBYsqhrRYBFfXRK6cFuXU7TeAoN58L4LP4xg/NC/WgFmCVy24S2ubwf/rgN3THXM4nySO4jc6C3Shy44ksJVSb0k87AB5A8jERqNeOJzWJahhF3VHI4gMiMmNfDDs+EAD58QgvLiI84g4NmxNiAvXWdlpXxn1qBU3fi1zy7+wrW5DkG0yaESVXGbnO4BGmFjkyaAoWMQ7btPeE34NFW2SaPwDl1KXbbHvaL+H1MubC4jLqC3GT+qZsBB9BcUThkDhwy72+5pi4rn1Zcrl/zjJ6QIDAQAB",
   "permissions": [
     "webRequest",
     "tabs",
@@ -19,18 +20,18 @@
     "service_worker": "background.js"
   },
   "icons": {
-    "16": "images/logo-16-colorv2.png",
-    "32": "images/logo-32-colorv2.png",
-    "48": "images/logo-48-colorv2.png",
-    "128": "images/logo-128-colorv2.png"
+    "16": "images/logo-16-color.png",
+    "32": "images/logo-32-color.png",
+    "48": "images/logo-48-color.png",
+    "128": "images/logo-128-color.png"
   },
   "action": {
     "default_title": "SharePoint Video Downloader",
     "default_icon": {
-      "16": "images/logo-16-grayv2.png",
-      "32": "images/logo-32-grayv2.png",
-      "48": "images/logo-48-grayv2.png",
-      "128": "images/logo-128-grayv2.png"
+      "16": "images/logo-16-gray.png",
+      "32": "images/logo-32-gray.png",
+      "48": "images/logo-48-gray.png",
+      "128": "images/logo-128-gray.png"
     }
   }
 }

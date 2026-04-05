@@ -11,6 +11,7 @@ import desktop_app.composeapp.generated.resources.Res
 import desktop_app.composeapp.generated.resources.app_icon
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import org.example.desktop_app.data.util.ChromeExtensionInstaller
 import org.example.desktop_app.data.util.ChromeMessageDecoder
 import org.example.desktop_app.di.appModule
 import org.example.desktop_app.domain.models.DownloadStatus
@@ -32,6 +33,7 @@ import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
 const val INSTANCE_PORT = 49152
+const val extensionId = "nbipmgebklaiigmhoflnjpoifnlbblbk"
 
 // A global flow to pass messages from the OS layer up to the Compose UI layer
 private val _incomingJsonFlow = MutableSharedFlow<String>(replay = 1, extraBufferCapacity = 10)
@@ -41,6 +43,8 @@ fun main(args: Array<String>) {
     try {
         // 1. HOST ATTEMPT: Try to claim the port
         val serverSocket = ServerSocket(INSTANCE_PORT)
+
+        ChromeExtensionInstaller.installManifest(extensionId = extensionId)
 
         // Start a background thread to handle incoming data forever
         thread(isDaemon = true) {

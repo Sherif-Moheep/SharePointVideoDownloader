@@ -29,6 +29,8 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.room.runtime)
             implementation(libs.sqlite.bundled)
+            implementation(libs.kotlinx.collections.immutable)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -47,11 +49,15 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "org.example.desktop_app"
+            packageName = "SharePoint Video Downloader"
             packageVersion = "1.0.0"
 
             windows {
                 iconFile.set(project.file("src/jvmMain/resources/app-icon.ico"))
+                shortcut = true
+                menuGroup = "SharePoint Video Downloader"
+                dirChooser = true
+                upgradeUuid = "cf723fa3-6794-4511-ba0f-2c7348a3edd9"
             }
         }
     }

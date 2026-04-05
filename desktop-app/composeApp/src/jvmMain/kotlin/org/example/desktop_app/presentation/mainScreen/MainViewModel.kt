@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import desktop_app.composeapp.generated.resources.Res
 import desktop_app.composeapp.generated.resources.file_missing
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,7 +34,7 @@ class MainViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             mainUseCases.getDownloadHistory().collect { historyList ->
                     val uiList = historyList.map{ it.toUiModel() }
-                    _state.value = MainState.Dashboard(downloads = uiList)
+                    _state.value = MainState.Dashboard(downloads = uiList.toPersistentList())
 
             }
         }
