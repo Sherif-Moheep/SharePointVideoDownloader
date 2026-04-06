@@ -48,7 +48,6 @@ fun VideoHistoryCard(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
 
-                // 1. The Icon / Thumbnail Placeholder (Far Left)
                 Box(
                     modifier = Modifier
                         .size(64.dp)
@@ -66,11 +65,9 @@ fun VideoHistoryCard(
 
                 Spacer(modifier = Modifier.width(16.dp))
 
-                // 2. The Main Data Area
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
-                    // Top Row: Title on the left, Size & Date on the right
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -94,7 +91,6 @@ fun VideoHistoryCard(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Bottom Row: Dynamic Progress or Status Badge
                     when (video.status) {
                         DownloadStatus.DOWNLOADING -> {
                             Row(verticalAlignment = Alignment.CenterVertically) {

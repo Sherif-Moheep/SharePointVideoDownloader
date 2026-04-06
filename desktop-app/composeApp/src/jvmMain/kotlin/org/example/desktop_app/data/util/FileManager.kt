@@ -9,10 +9,9 @@ object FileManager {
     // 1. Define the specific folder name
     private const val APP_FOLDER_NAME = "SharePoint Downloads"
 
-    /**
-     * Gets the path to the app's specific download folder.
-     * It automatically creates the folder if it doesn't exist yet.
-     */
+
+    // Gets the path to the app's specific download folder.
+    // It automatically creates the folder if it doesn't exist yet.
     fun getDownloadDirectory(): File {
         // Gets "C:\Users\Name" (Win) or "/Users/Name" (Mac)
         val userHome = System.getProperty("user.home")
@@ -28,27 +27,17 @@ object FileManager {
         return downloadDir
     }
 
-    /**
-     * Generates a safe file path for a specific video.
-     */
+
+    // Generates a safe file path for a specific video.
     fun getOutputFile(videoName: String): File {
         val directory = getDownloadDirectory()
         val safeFileName = sanitizeFileName(videoName)
 
-        // Ensures the file ends with .mp4
-//        val finalName = if (safeFileName.endsWith(".mp4", ignoreCase = true)) {
-//            safeFileName
-//        } else {
-//            "$safeFileName.mp4"
-//        }
-
         return File(directory, safeFileName)
     }
 
-    /**
-     * Helper to strip illegal characters (like : / \ ? * < > |) from video titles
-     * so the OS doesn't throw an error when creating the file.
-     */
+    // Helper to strip illegal characters (like : / \ ? * < > |) from video titles
+    // so the OS doesn't throw an error when creating the file.
     private fun sanitizeFileName(name: String): String {
         val illegalChars = "[\\\\/:*?\"<>|]".toRegex()
         return name.replace(illegalChars, "_").trim()

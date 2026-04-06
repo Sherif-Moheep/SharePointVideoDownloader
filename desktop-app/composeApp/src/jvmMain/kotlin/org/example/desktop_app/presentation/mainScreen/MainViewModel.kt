@@ -30,7 +30,6 @@ class MainViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             mainUseCases.resetStuckDownloads()
         }
-        // Listen to your Room Database Flow forever
         viewModelScope.launch(Dispatchers.IO) {
             mainUseCases.getDownloadHistory().collect { historyList ->
                     val uiList = historyList.map{ it.toUiModel() }
@@ -84,7 +83,6 @@ class MainViewModel(
             )
 
             if (!success) {
-                // If it failed, tell the UI to show a toast
                 _effect.send(MainEffect.ShowToast(getString(Res.string.file_missing)))
             }
         }

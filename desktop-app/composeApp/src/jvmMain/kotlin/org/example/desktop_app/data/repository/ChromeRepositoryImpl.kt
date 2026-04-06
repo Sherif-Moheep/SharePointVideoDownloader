@@ -7,7 +7,6 @@ import org.example.desktop_app.domain.models.VideoMessage
 import org.example.desktop_app.domain.repository.ChromeRepository
 
 class ChromeRepositoryImpl : ChromeRepository {
-
     private val jsonConfig = Json { ignoreUnknownKeys = true }
 
     override suspend fun processVideoData(rawJson: String): Result<VideoMessage> = withContext(Dispatchers.IO) {

@@ -8,13 +8,10 @@ class ResetStuckDownloadsUseCase(
     private val historyRepository: HistoryRepository
 ) {
     suspend operator fun invoke() {
-        // Grab the current history list
         val currentHistory = historyRepository.getDownloadHistory().first()
 
-        // Find and cancel stuck videos
         val stuckVideos = currentHistory.filter { it.status == DownloadStatus.DOWNLOADING }
 
-        // Flip them all to CANCELLED
         stuckVideos.forEach { video ->
             historyRepository.upsertVideo(video.copy(status = DownloadStatus.CANCELLED))
         }

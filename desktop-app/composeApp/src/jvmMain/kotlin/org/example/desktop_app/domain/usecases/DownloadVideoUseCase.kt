@@ -14,17 +14,14 @@ class DownloadVideoUseCase(
     suspend operator fun invoke(videoId: Long) = coroutineScope {
         val video = historyRepository.getVideoById(videoId) ?: return@coroutineScope
 
-        // 1. Mark as downloading
         val downloadingVideo = video.copy(status = DownloadStatus.DOWNLOADING)
         historyRepository.upsertVideo(downloadingVideo)
 
         try {
-            // 2. Start download
             val finalPath = videoDownloadRepository.downloadVideo(
                 videoName = video.name,
                 url = video.url,
                 onProgress = { currentProgress ->
-                    // 3. Fire progress updates concurrently
                     launch(Dispatchers.IO) {
                         historyRepository.upsertVideo(
                             downloadingVideo.copy(progress = currentProgress)
@@ -33,7 +30,6 @@ class DownloadVideoUseCase(
                 }
             )
 
-            // 4. Mark as completed
             historyRepository.upsertVideo(
                 downloadingVideo.copy(
                     status = DownloadStatus.COMPLETED,
@@ -42,7 +38,6 @@ class DownloadVideoUseCase(
                 )
             )
         } catch (e: Exception) {
-            // 5. Handle failure
             historyRepository.upsertVideo(
                 downloadingVideo.copy(
                     status = DownloadStatus.FAILED,
