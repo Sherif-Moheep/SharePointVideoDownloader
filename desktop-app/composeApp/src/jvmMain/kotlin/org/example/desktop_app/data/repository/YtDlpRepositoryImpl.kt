@@ -7,6 +7,8 @@ import org.example.desktop_app.data.util.BinaryExtractor
 import org.example.desktop_app.data.util.FileManager
 import org.example.desktop_app.domain.repository.VideoDownloadRepository
 
+const val DEBUG = false
+
 class YtDlpRepositoryImpl : VideoDownloadRepository {
 
     override suspend fun downloadVideo(
@@ -52,7 +54,7 @@ class YtDlpRepositoryImpl : VideoDownloadRepository {
                     ensureActive()
 
                     val currentLine = line ?: ""
-                    println("yt-dlp: $currentLine") // Keep for debugging ()
+                    if (DEBUG) println("yt-dlp: $currentLine") // Keep for debugging ()
 
                     // 1. Detect if we switched to downloading the Audio track
                     if (currentLine.contains("[download] Destination:") && (currentLine.contains(".m4a") || currentLine.contains(".webm"))) {

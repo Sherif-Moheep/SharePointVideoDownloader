@@ -4,6 +4,8 @@ import java.io.File
 
 object FileManager {
 
+    private const val DEBUG = false
+
     // 1. Define the specific folder name
     private const val APP_FOLDER_NAME = "SharePoint Downloads"
 
@@ -57,7 +59,7 @@ object FileManager {
 
         val file = File(filePath)
         if (!file.exists()) {
-            println("File does not exist: $filePath")
+            if (DEBUG) println("File does not exist: $filePath")
             return false
         }
 
@@ -80,7 +82,7 @@ object FileManager {
             }
             return true
         } catch (e: Exception) {
-            println("Failed to open file explorer: ${e.message}")
+            if (DEBUG) println("Failed to open file explorer: ${e.message}")
             return false
         }
     }

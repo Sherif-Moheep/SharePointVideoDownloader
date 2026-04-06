@@ -25,6 +25,7 @@ import org.koin.compose.koinInject
 import org.koin.core.context.GlobalContext.startKoin
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.io.PrintStream
 import java.io.PrintWriter
 import java.net.BindException
 import java.net.ServerSocket
@@ -32,19 +33,23 @@ import java.net.Socket
 import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
-const val INSTANCE_PORT = 49152
-const val extensionId = "nbipmgebklaiigmhoflnjpoifnlbblbk"
+private const val INSTANCE_PORT = 49152
+private const val extensionId = "nbipmgebklaiigmhoflnjpoifnlbblbk"
 
 // A global flow to pass messages from the OS layer up to the Compose UI layer
 private val _incomingJsonFlow = MutableSharedFlow<String>(replay = 1, extraBufferCapacity = 10)
 val incomingJsonFlow = _incomingJsonFlow.asSharedFlow()
 
 fun main(args: Array<String>) {
+
+    val originalOut = System.out // saving the System.out to a variable
+    System.setOut(System.err) // redirects all print statements to System.err, which chrome native messaging ignores
     try {
         // 1. HOST ATTEMPT: Try to claim the port
         val serverSocket = ServerSocket(INSTANCE_PORT)
 
-        ChromeExtensionInstaller.installManifest(extensionId = extensionId)
+        // Configures the host.json file
+        ChromeExtensionInstaller.installNativeMessagingHost(extensionId = extensionId)
 
         // Start a background thread to handle incoming data forever
         thread(isDaemon = true) {
@@ -52,6 +57,8 @@ fun main(args: Array<String>) {
             val launchedByChrome = args.any { it.startsWith("chrome-extension://") }
             if (launchedByChrome) {
                 ChromeMessageDecoder.readStream(System.`in`)?.let { _incomingJsonFlow.tryEmit(it) }
+
+                sendChromeReply(statusMessage = "launched_and_received", originalOut = originalOut)
             }
 
             // B. Listen for future clicks sent by Proxy instances
@@ -111,7 +118,7 @@ fun main(args: Array<String>) {
             }
         }
 
-    } catch (e: BindException) {
+    } catch (_: BindException) {
         // 3. PROXY INSTANCE: Port is taken, which means the app is already running!
 
         // Read the message Chrome just sent us via System.in
@@ -129,24 +136,27 @@ fun main(args: Array<String>) {
             }
         }
 
-        // 1. Create a simple JSON response confirming the hand-off
-        val responseBytes = "{\"status\": \"forwarded\"}".toByteArray(Charsets.UTF_8)
+        sendChromeReply(statusMessage = "forwarded", originalOut = originalOut)
 
-        // 2. Write the 4-byte length header (Chrome strictly requires little-endian format)
-        System.out.write(
-            byteArrayOf(
-                responseBytes.size.toByte(),
-                (responseBytes.size shr 8).toByte(),
-                (responseBytes.size shr 16).toByte(),
-                (responseBytes.size shr 24).toByte()
-            )
-        )
-
-        // 3. Write the actual JSON payload and flush the stream
-        System.out.write(responseBytes)
-        System.out.flush()
-
-        // NOW you can safely kill this redundant process
         exitProcess(0)
     }
+}
+
+private fun sendChromeReply(statusMessage: String, originalOut: PrintStream) {
+    // Wrap the message in a simple JSON object
+    val responseBytes = "{\"status\": \"$statusMessage\"}".toByteArray(Charsets.UTF_8)
+
+    // Write the 4-byte length header using the pristine, original stream
+    originalOut.write(
+        byteArrayOf(
+            responseBytes.size.toByte(),
+            (responseBytes.size shr 8).toByte(),
+            (responseBytes.size shr 16).toByte(),
+            (responseBytes.size shr 24).toByte()
+        )
+    )
+
+    // Write the actual JSON payload and flush the stream
+    originalOut.write(responseBytes)
+    originalOut.flush()
 }

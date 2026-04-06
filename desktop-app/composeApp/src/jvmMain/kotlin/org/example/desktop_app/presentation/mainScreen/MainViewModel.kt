@@ -78,7 +78,7 @@ class MainViewModel(
     private fun openDownloadedFile(filePath: String?) {
         if (filePath.isNullOrBlank()) return
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             val success = mainUseCases.openFile(
                 filePath = filePath
             )

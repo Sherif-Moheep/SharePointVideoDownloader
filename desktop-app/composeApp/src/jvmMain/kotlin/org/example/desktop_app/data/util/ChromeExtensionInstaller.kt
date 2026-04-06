@@ -6,7 +6,7 @@ object ChromeExtensionInstaller {
 
     private const val DEBUG = false
 
-    fun installManifest(extensionId: String) {
+    fun installNativeMessagingHost(extensionId: String) {
         try {
             val appDataPath = System.getenv("LOCALAPPDATA") ?: System.getProperty("user.home")
             val appFolder = File(appDataPath, "SharePointDownloader")

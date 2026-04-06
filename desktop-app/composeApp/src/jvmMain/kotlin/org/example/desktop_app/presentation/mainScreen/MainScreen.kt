@@ -130,7 +130,6 @@ fun DashboardScreen(
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.surfaceVariant,
         floatingActionButton = {
-            // The FAB and its animation slot perfectly in here
             androidx.compose.animation.AnimatedVisibility(
                 visible = showScrollToTop,
                 enter = fadeIn(),
@@ -151,11 +150,10 @@ fun DashboardScreen(
             }
         }
     ) { paddingValues ->
-        // Scaffold provides paddingValues to prevent content from overlapping the FAB/NavBars
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues) // 👈 Apply the padding here
+                .padding(paddingValues)
         ) {
             state.errorMessage?.let { error ->
                 Text(
@@ -174,7 +172,6 @@ fun DashboardScreen(
                     )
                 }
             } else {
-                // Look how much cleaner this is! No more Box wrapper needed.
                 LazyColumn(
                     state = listState,
                     modifier = Modifier.fillMaxSize(),
