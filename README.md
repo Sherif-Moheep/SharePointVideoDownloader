@@ -6,6 +6,14 @@
 
 ---
 
+> [!CAUTION]
+> ### ⚠️ Technical Alert: Approach Potentially Patched
+> It appears a recent SharePoint platform update (April 2026) has modified the way video manifests and authentication tokens are handled, rendering the current interception method unstable. 
+>
+> **Status:** I am actively investigating a new approach to bypass these latest restrictions. If you are a developer and have insights into the new SharePoint playback logic, feel free to open an issue or a PR!
+
+---
+
 <div align="center">
   <img src="https://github.com/user-attachments/assets/a111e8d4-b507-4797-b1c8-04ef7f0bf95d" alt="Demo GIF" width="800">
 </div>
