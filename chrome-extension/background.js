@@ -1,229 +1,188 @@
-const DEBUG = false; // debug flag
+const DEBUG = true;
 
-let timers = {}; // { tabId: timerId }
-let tokens = {}; // { tabId: bearerToken } - Stores intercepted tokens temporarily
+if (DEBUG) console.log("SharePoint Downloader extension loaded. Waiting for user click...");
 
-if (DEBUG) console.log("Extension started. Listening for SharePoint/Stream videos...");
+// ----------------------------------------------------------------------
+// ICON & HOVER STATE MANAGEMENT (The Domain Checker)
+// ----------------------------------------------------------------------
 
-// 1. LISTENER: Intercepts outgoing requests to grab the Bearer token
-chrome.webRequest.onBeforeSendHeaders.addListener(
-    function (details) {
-        const tabId = details.tabId;
-        if (tabId === -1) return;
-
-        for (let header of details.requestHeaders) {
-            if (header.name.toLowerCase() === 'authorization') {
-                tokens[tabId] = header.value; 
-                if (DEBUG) console.log(`[Tab ${tabId}] Bearer token intercepted!`);
-                break; 
-            }
+// Helper: Update icon and hover text based on domain
+function updateIconState(tabId, url) {
+    if (!url) return;
+    
+    // Check if the URL is a supported Microsoft media domain
+    const isSupported = url.includes("sharepoint.com") || 
+                        url.includes("svc.ms") || 
+                        url.includes("microsoftstream.com");
+    
+    const mode = isSupported ? "color" : "gray";
+    const hoverText = isSupported ? "Click to download video" : "No supported video detected";
+    
+    // Update the Icon color
+    chrome.action.setIcon({
+        tabId: tabId,
+        path: {
+            "16": `images/logo-16-${mode}.png`,
+            "32": `images/logo-32-${mode}.png`,
+            "48": `images/logo-48-${mode}.png`,
+            "128": `images/logo-128-${mode}.png`
         }
-        return { requestHeaders: details.requestHeaders };
-    },
-    { 
-        urls: [
-            "*://*.sharepoint.com/*",
-            "*://*.svc.ms/*",
-            "*://*.microsoftstream.com/*"
-        ] 
-    },
-    ["requestHeaders", "extraHeaders"] 
-);
+    });
 
-// Listener: Intercepts SharePoint/Stream video manifest requests
-chrome.webRequest.onBeforeRequest.addListener(
-  function (details) {
-    if (details.method !== "GET") return;
-    
-    const tabId = details.tabId;
-    const url = details.url;
+    // Update the Hover Text (Tooltip)
+    chrome.action.setTitle({
+        tabId: tabId,
+        title: hoverText
+    });
+}
 
-    if (tabId === -1) return;
+// Run when the user switches to a different tab
+chrome.tabs.onActivated.addListener((activeInfo) => {
+    chrome.tabs.get(activeInfo.tabId, (tab) => {
+        if (!chrome.runtime.lastError && tab) {
+            updateIconState(tab.id, tab.url);
+        }
+    });
+});
 
-    // Debounce logic to get only the "final" request
-    if (timers[tabId]) clearTimeout(timers[tabId]);
+// Run when the current tab's URL changes or refreshes
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (changeInfo.url) {
+        updateIconState(tabId, changeInfo.url);
+    } else if (changeInfo.status === 'complete' && tab.url) {
+        updateIconState(tabId, tab.url);
+    }
+});
 
-    timers[tabId] = setTimeout(() => grabVideoDetails(tabId, url), 2000); 
-  },
-  { 
-    urls: [
-      "*://*.sharepoint.com/*videomanifest*",
-      "*://*.svc.ms/*videomanifest*",
-      "*://*.microsoftstream.com/*videomanifest*"
-    ] 
-  }
-);
 
-// Trigger: Handle user click on extension icon
-chrome.action.onClicked.addListener((tab) => {
-    const storageKey = `video_${tab.id}`;
-    
-    chrome.storage.session.get([storageKey], (result) => {
-        const videoData = result[storageKey];
+// ----------------------------------------------------------------------
+// MAIN EXECUTION LOGIC (On-Demand Extraction)
+// ----------------------------------------------------------------------
 
-        if (!videoData) {
+// Trigger: Handle user click on the extension icon
+chrome.action.onClicked.addListener(async (tab) => {
+    // Basic check to ensure we are on a relevant Microsoft media page
+    if (!tab.url || (!tab.url.includes("sharepoint.com") && !tab.url.includes("svc.ms") && !tab.url.includes("microsoftstream.com"))) {
+        chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            func: () => alert("❌ Please navigate to a SharePoint/Stream video page first.")
+        });
+        return;
+    }
+
+    try {
+        if (DEBUG) console.log(`[Tab ${tab.id}] Injecting script to fetch size and URL...`);
+
+        // Execute the async script inside the webpage's memory
+        const injectionResults = await chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            world: "MAIN", // CRITICAL: This allows us to see window.g_fileInfo
+            func: extractVideoData 
+        });
+
+        const extractedData = injectionResults[0]?.result;
+
+        if (extractedData && extractedData.url) {
+            if (DEBUG) console.log(`[Tab ${tab.id}] ✅ Success! Size: ${extractedData.size}`);
+
+            const videoData = {
+                url: extractedData.url,
+                title: tab.title || "SharePoint Video",
+                size: extractedData.size // Now contains the exact MB/GB from the server
+            };
+
+            // Send to Kotlin Native App via native messaging bridge
+            chrome.runtime.sendNativeMessage('com.sharepoint.downloader', videoData, (response) => {
+                if (chrome.runtime.lastError) {
+                    if (DEBUG) console.error("Connection Error:", chrome.runtime.lastError.message);
+                    chrome.scripting.executeScript({
+                        target: { tabId: tab.id },
+                        func: () => alert("❌ Could not connect to the SharePoint Video Downloader desktop app.\n\nPlease ensure your native host is installed and running.")
+                    });
+                } else {
+                    if (DEBUG) console.log("Payload sent successfully to the Kotlin app!");
+                }
+            });
+
+        } else {
+            if (DEBUG) console.warn(`[Tab ${tab.id}] g_fileInfo not found on this page.`);
             chrome.scripting.executeScript({
                 target: { tabId: tab.id },
-                function: () => alert("❌ No video data found for this tab. Please make sure you're on a SharePoint/Stream video page and try again.")
+                func: () => alert("❌ Could not extract the video data. The page might still be loading, or it is not a supported video player.")
             });
-            return;
         }
 
-        chrome.runtime.sendNativeMessage('com.sharepoint.downloader', videoData, (response) => {
-            if (chrome.runtime.lastError) {
-                if (DEBUG) console.error("Connection Error:", chrome.runtime.lastError.message);
+    } catch (err) {
+        if (DEBUG) console.error("Script Execution Error:", err);
+    }
+});
 
-                chrome.scripting.executeScript({
-                    target: { tabId: tab.id },
-                    function: () => alert("❌ Could not connect to the SharePoint Video Downloader desktop app.\n\nPlease ensure you have installed the app and opened it at least once.")
+// ----------------------------------------------------------------------
+// THE INJECTED SCRIPT (Runs in the webpage context)
+// NOTE: This cannot reference any variables outside of itself!
+// ----------------------------------------------------------------------
+async function extractVideoData() {
+    // Check if Microsoft's metadata object exists
+    if (typeof window.g_fileInfo === 'undefined') return null;
+
+    const transformUrl = window.g_fileInfo['.transformUrl'] || window.g_fileInfo['.providerCdnTransformUrl'];
+    if (!transformUrl) return null;
+
+    let finalUrl = null;
+    let finalSize = "Unknown";
+
+    // Internal helper function for formatting bytes
+    function formatBytes(bytes) {
+        if (bytes > 1024 * 1024 * 1024) {
+            return (bytes / (1024 * 1024 * 1024)).toFixed(2) + " GB";
+        } else {
+            return (bytes / (1024 * 1024)).toFixed(0) + " MB";
+        }
+    }
+
+    try {
+        const urlObj = new URL(transformUrl);
+
+        // 1. Fetch exact size from the Graph API using the docid
+        const docid = urlObj.searchParams.get("docid");
+        if (docid) {
+            try {
+                let apiUrl = decodeURIComponent(docid);
+                if (apiUrl.includes("?")) apiUrl = apiUrl.split("?")[0];
+                
+                // Add ?$select=size to only request the byte count
+                apiUrl += "?$select=size";
+
+                // The browser automatically attaches your session cookies to this request
+                const response = await fetch(apiUrl, {
+                    method: "GET",
+                    headers: { "Accept": "application/json" }
                 });
-            } else {
-                if (DEBUG) console.log("Message sent successfully!");
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.size) finalSize = formatBytes(data.size);
+                }
+            } catch (sizeError) {
+                console.warn("Could not fetch file size, falling back to Unknown.");
             }
-        });
-    });
-});
-
-// Helper: Process video details and update UI
-chrome.tabs.onRemoved.addListener((tabId) => {
-    const storageKey = `video_${tabId}`;
-    chrome.storage.session.remove(storageKey, () => {
-        if (DEBUG) console.log(`Cleared storage data for closed Tab ${tabId}`);
-    });
-    
-    if (timers[tabId]) {
-        clearTimeout(timers[tabId]);
-        delete timers[tabId];
-    }
-
-    if (tokens[tabId]) {
-        delete tokens[tabId];
-    }
-});
-
-// Helper: Reset icon and clear data if user navigates away from video page
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    // If the URL changes and it's no longer a SharePoint/Stream video
-    if (changeInfo.url && !changeInfo.url.includes("videomanifest")) {
-        const storageKey = `video_${tabId}`;
-        chrome.storage.session.remove(storageKey);
-
-        // Clear the token if they leave the video page
-        if (tokens[tabId]) {
-            delete tokens[tabId];
         }
+
+        // 2. Build the yt-dlp DASH manifest URL
+        // Replace the thumbnail endpoint with the videomanifest endpoint
+        urlObj.pathname = urlObj.pathname.replace(/\/transform\/.*$/, '/transform/videomanifest');
+        // Add yt-dlp DASH format requirements
+        urlObj.searchParams.set('part', 'index');
+        urlObj.searchParams.set('format', 'dash');
         
-        chrome.action.setIcon({ 
-            tabId: tabId, 
-            path: {
-                "16": "images/logo-16-gray.png",
-                "32": "images/logo-32-gray.png",
-                "48": "images/logo-48-gray.png",
-                "128": "images/logo-128-gray.png"
-            } 
-        });
+        finalUrl = urlObj.toString();
 
-        chrome.action.setTitle({ 
-            title: "No video detected", 
-            tabId: tabId 
-        });
-    }
-});
-
-// Helper: Prepare video details and update UI
-async function grabVideoDetails(tabId, url){
-    chrome.tabs.get(tabId, async (tab) => {
-        if (chrome.runtime.lastError || !tab) return;
-
-        const videoTitle = tab.title || "Unknown Video";
-        const currentToken = tokens[tabId] || null;
-        let finalSize = "Unknown";
-
-        // Try to fetch the EXACT size using the token
-        if (currentToken) {
-            const exactSize = await fetchExactSize(url, currentToken);
-            if (exactSize) {
-                finalSize = exactSize;
-            }
-        }
-
-        const storageKey = `video_${tabId}`;
-        const videoData = {
-            url: url,
-            title: videoTitle,
-            size: finalSize,
+        return { 
+            url: finalUrl, 
+            size: finalSize 
         };
 
-        chrome.storage.session.set({ [storageKey]: videoData }, () => {
-            if (DEBUG) console.log(`[Tab ${tabId}] Video data saved. Size: ${finalSize}`); 
-        });
-
-        chrome.action.setIcon({
-            tabId: tabId,
-            path: {
-                "16": "images/logo-16-color.png",
-                "32": "images/logo-32-color.png",
-                "48": "images/logo-48-color.png",
-                "128": "images/logo-128-color.png"
-            }
-        });
-
-        chrome.action.setTitle({ 
-            title: `Download: ${videoTitle} (${finalSize})`, 
-            tabId: tabId 
-        });
-    });
-
-    delete timers[tabId];
-}
-
-// 7. HELPER: Parses the API URL from the manifest and fetches the size
-async function fetchExactSize(manifestUrl, bearerToken) {
-    try {
-        const urlObj = new URL(manifestUrl);
-        
-        // The docid parameter contains the encoded Graph API URL
-        const docid = urlObj.searchParams.get("docid");
-        if (!docid) return null;
-
-        let apiUrl = decodeURIComponent(docid);
-
-        if (apiUrl.includes("?")) {
-            apiUrl = apiUrl.split("?")[0];
-        }
-
-        // Add ?$select=size to only request the byte count
-        apiUrl += "?$select=size";
-
-        const response = await fetch(apiUrl, {
-            method: "GET",
-            headers: {
-                "Authorization": bearerToken,
-                "Accept": "application/json"
-            }
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            if (data.size) {
-                return formatBytes(data.size);
-            }
-        } else {
-            if (DEBUG) console.warn("API request rejected. Status:", response.status);
-        }
-        return null;
-        
     } catch (e) {
-        if (DEBUG) console.error("Fetch Exact Size Error:", e);
         return null;
-    }
-}
-
-// 8. HELPER: Converts raw bytes into a clean MB/GB string
-function formatBytes(bytes) {
-    if (bytes > 1024 * 1024 * 1024) {
-        return (bytes / (1024 * 1024 * 1024)).toFixed(2) + " GB";
-    } else {
-        return (bytes / (1024 * 1024)).toFixed(0) + " MB";
     }
 }
