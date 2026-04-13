@@ -1,4 +1,4 @@
-const DEBUG = true;
+const DEBUG = false;
 
 if (DEBUG) console.log("SharePoint Downloader extension loaded. Waiting for user click...");
 
@@ -34,6 +34,7 @@ function updateIconState(tabId, url) {
         tabId: tabId,
         title: hoverText
     });
+
 }
 
 // Run when the user switches to a different tab
@@ -119,7 +120,6 @@ chrome.action.onClicked.addListener(async (tab) => {
 
 // ----------------------------------------------------------------------
 // THE INJECTED SCRIPT (Runs in the webpage context)
-// NOTE: This cannot reference any variables outside of itself!
 // ----------------------------------------------------------------------
 async function extractVideoData() {
     // Check if Microsoft's metadata object exists
