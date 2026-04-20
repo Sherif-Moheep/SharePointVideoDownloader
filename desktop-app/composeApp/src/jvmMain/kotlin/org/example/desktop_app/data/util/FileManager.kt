@@ -31,9 +31,18 @@ object FileManager {
     // Generates a safe file path for a specific video.
     fun getOutputFile(videoName: String): File {
         val directory = getDownloadDirectory()
-        val safeFileName = sanitizeFileName(videoName)
+        val baseName = removeExtension(videoName)
+        val safeFileName = sanitizeFileName(baseName)
 
         return File(directory, safeFileName)
+    }
+
+    private fun removeExtension(fileName: String): String {
+        val lastDotIndex = fileName.lastIndexOf('.')
+        if (lastDotIndex > 0) {
+            return fileName.substring(0, lastDotIndex)
+        }
+        return fileName
     }
 
     // Helper to strip illegal characters (like : / \ ? * < > |) from video titles

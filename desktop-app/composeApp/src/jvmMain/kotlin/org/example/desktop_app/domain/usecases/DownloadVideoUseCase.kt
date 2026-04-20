@@ -30,8 +30,12 @@ class DownloadVideoUseCase(
                 }
             )
 
+            // Extract the actual filename from the final path
+            val finalFileName = finalPath.substringAfterLast('\\').substringAfterLast('/')
+
             historyRepository.upsertVideo(
                 downloadingVideo.copy(
+                    name = finalFileName,
                     status = DownloadStatus.COMPLETED,
                     progress = 100,
                     savedPath = finalPath

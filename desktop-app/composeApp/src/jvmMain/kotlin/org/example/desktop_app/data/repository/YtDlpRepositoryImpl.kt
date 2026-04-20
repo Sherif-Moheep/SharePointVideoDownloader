@@ -32,7 +32,7 @@ class YtDlpRepositoryImpl : VideoDownloadRepository {
             "--concurrent-fragments", numberOfFragments.toString(),
             "--retry-sleep", "fragment:exp=1:20",
             "--user-agent", userAgentValue,
-            "-o", targetFile.absolutePath,
+            "-o", "${targetFile.absolutePath}.%(ext)s",
             cleanUrl(url).trim()
         )
 
@@ -89,8 +89,19 @@ class YtDlpRepositoryImpl : VideoDownloadRepository {
 
             val exitCode = process.waitFor()
 
-            if (exitCode == 0 && targetFile.exists()) {
-                return@withContext targetFile.absolutePath
+            if (exitCode == 0) {
+                // Find the actual file that was created (since we used .%(ext)s)
+                val parentDir = targetFile.parentFile
+                val baseName = targetFile.name
+                val actualFile = parentDir.listFiles()?.find { 
+                    it.name.startsWith(baseName) && it.name.length > baseName.length && it.name[baseName.length] == '.'
+                }
+
+                if (actualFile != null && actualFile.exists()) {
+                    return@withContext actualFile.absolutePath
+                } else {
+                    throw Exception("Could not locate downloaded file for $baseName")
+                }
             } else {
                 throw Exception("yt-dlp failed with exit code $exitCode")
             }

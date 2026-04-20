@@ -25,3 +25,18 @@ replay_pid*
 
 # Kotlin Gradle plugin data, see https://kotlinlang.org/docs/whatsnew20.html#new-directory-for-kotlin-data-in-gradle-projects
 .kotlin/
+
+# IntelliJ IDEA / Android Studio #
+##################################
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Explicitly ignore local data sources and secrets
+.idea/dataSources.local.xml
+.idea/dataSources/
+.idea/dataSources.xml
+.idea/workspace.xml
+.idea/shelf/
+out/
