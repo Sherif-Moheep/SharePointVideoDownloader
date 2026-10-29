@@ -7,7 +7,6 @@
   <img src="https://img.shields.io/github/stars/Sherif-Moheep/SharePointVideoDownloader?style=for-the-badge" alt="Stars">
   <img src="https://img.shields.io/github/v/release/Sherif-Moheep/SharePointVideoDownloader?style=for-the-badge" alt="Releases">
   <img src="https://img.shields.io/badge/Platform-Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Platform">
-  <img src="https://img.shields.io/github/license/Sherif-Moheep/SharePointVideoDownloader?style=for-the-badge" alt="License">
 </div>
 
 ---
