@@ -45,7 +45,7 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "org.example.desktop_app.presentation.MainKt"
+        mainClass = "com.sharepointvideodownloader.desktop.presentation.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)

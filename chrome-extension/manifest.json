@@ -2,6 +2,9 @@
   "manifest_version": 3,
   "name": "SharePoint Video Downloader",
   "version": "1.1",
+  "description": "Download view-only videos directly from Microsoft SharePoint and Stream.",
+  "author": "Sherif Moheep",
+  "homepage_url": "https://github.com/Sherif-Moheep/SharePointVideoDownloader",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0Aj/PQhsLcaPhwkt5V6NSMDKbMzv24/XAULeAATrO1ipv7BSWtKZdaJDne4INyMMBYsqhrRYBFfXRK6cFuXU7TeAoN58L4LP4xg/NC/WgFmCVy24S2ubwf/rgN3THXM4nySO4jc6C3Shy44ksJVSb0k87AB5A8jERqNeOJzWJahhF3VHI4gMiMmNfDDs+EAD58QgvLiI84g4NmxNiAvXWdlpXxn1qBU3fi1zy7+wrW5DkG0yaESVXGbnO4BGmFjkyaAoWMQ7btPeE34NFW2SaPwDl1KXbbHvaL+H1MubC4jLqC3GT+qZsBB9BcUThkDhwy72+5pi4rn1Zcrl/zjJ6QIDAQAB",
   "permissions": [
     "tabs",

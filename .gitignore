@@ -40,3 +40,12 @@ replay_pid*
 .idea/workspace.xml
 .idea/shelf/
 out/
+
+# Gradle & Build Output
+.gradle/
+**/build/
+local.properties
+
+# Inno Setup Output
+installer/Output/
+installer/*.exe
