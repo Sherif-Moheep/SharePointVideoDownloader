@@ -49,3 +49,6 @@ local.properties
 # Inno Setup Output
 installer/Output/
 installer/*.exe
+
+# Release Artifacts
+release/

@@ -70,6 +70,11 @@ The extension detects the videos in your browser and sends them to the desktop a
 
 🎉 **You're done!** Go open a SharePoint or Stream video and watch the icon light up.
 
+#### 🔄 Updating from an Older Version
+If you already have the app installed:
+1. **Desktop App:** Close the running app, download the new `SharePointVideoDownloader_Setup.exe` from Releases, and run it. It safely updates your installation while preserving your download history.
+2. **Chrome Extension:** Unzip the new `SharePointDownloader_Extension.zip` over your existing folder, head to `chrome://extensions`, and click the **Reload** (↻) button on the extension card.
+
 ---
 
 ### 🛠️ Architecture: How it Works
