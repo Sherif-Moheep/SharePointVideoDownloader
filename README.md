@@ -91,5 +91,8 @@ This project was built to make offline learning easier for everyone. Contributio
 
 If you want to contribute, please fork the repository, create a feature branch, and submit a Pull Request!
 
+### 🙏 Acknowledgements
+* Thanks to [Brendan Gooden](https://github.com/brendangooden)'s [ms-teams-sharepoint-downloader](https://github.com/brendangooden/ms-teams-sharepoint-downloader), which served as a helpful reference and guide when rebuilding the Chrome extension.
+
 ### 📄 License
-This project is licensed under the MIT License - see the `LICENSE` file for details.
+This project is licensed under the GNU General Public License v3.0 (GPLv3) - see the `LICENSE` file for details.
