@@ -50,7 +50,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "SharePoint Video Downloader"
-            packageVersion = "1.0.0"
+            packageVersion = "1.1.1"
 
             windows {
                 iconFile.set(project.file("src/jvmMain/resources/app-icon.ico"))

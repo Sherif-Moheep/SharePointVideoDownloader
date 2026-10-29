@@ -2,7 +2,7 @@
 ; Note: Paths below are relative to this script file (located in /installer).
 
 #define MyAppName "SharePoint Video Downloader"
-#define MyAppVersion "1.0"
+#define MyAppVersion "1.1.1"
 #define MyAppPublisher "Sherif Moheep"
 #define MyAppURL "https://github.com/Sherif-Moheep/SharePointVideoDownloader"
 #define MyAppExeName "SharePoint Video Downloader.exe"
