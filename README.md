@@ -2,6 +2,10 @@
   <img src="https://github.com/user-attachments/assets/1607d4f7-8504-4e2f-9e79-92c9f25556e9" alt="App Icon" width="128">
   <h1>SharePoint Video Downloader</h1>
   <p>A seamless, one-click desktop integration tool to download view-only videos directly from Microsoft SharePoint and Microsoft Stream.</p>
+
+  <img src="https://img.shields.io/github/downloads/Sherif-Moheep/SharePointVideoDownloader/total?style=for-the-badge" alt="Downloads">
+  <img src="https://img.shields.io/github/stars/Sherif-Moheep/SharePointVideoDownloader?style=for-the-badge" alt="Stars">
+  <img src="https://img.shields.io/github/v/release/Sherif-Moheep/SharePointVideoDownloader?style=for-the-badge" alt="Releases">
 </div>
 
 ---
